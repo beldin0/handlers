@@ -11,6 +11,9 @@ func RegisterHandlers(mux *http.ServeMux) {
 	rawHandlerFunc := &RawHandlerFunc{"hello"}
 	mux.HandleFunc("/rawfunc", rawHandlerFunc.handle)
 
+	// RawHandlerFuncClosure
+	mux.HandleFunc("/rawfuncclosure", RawHandlerFuncClosure("hello"))
+
 	// RawHandlerClosure
 	rawHandlerClosure := &StructClosure{"hello"}
 	mux.Handle("/rawclosure", rawHandlerClosure.handler())
@@ -37,6 +40,12 @@ type RawHandlerFunc struct {
 
 func (raw *RawHandlerFunc) handle(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(raw.response))
+}
+
+// RawHandlerFuncClosure creates an instance of RawHandlerFunc and returns the handle method as a closure
+func RawHandlerFuncClosure(response string) http.HandlerFunc {
+	h := &RawHandlerFunc{"hello"}
+	return h.handle
 }
 
 // StructClosure is a struct with a method handler() that returns a function that conforms to http.HandlerFunc
